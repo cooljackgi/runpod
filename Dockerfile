@@ -14,7 +14,7 @@ RUN rm -rf /comfyui/models/vae \
     && ln -s /runpod-volume/models/loras           /comfyui/models/loras \
     && ln -s /runpod-volume/models/diffusion_models /comfyui/models/diffusion_models
 
-# ffmpeg + Video Helper Suite
+# ffmpeg + Video Helper Suite (build 2)
 RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 RUN cd /comfyui/custom_nodes \
     && git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git \
