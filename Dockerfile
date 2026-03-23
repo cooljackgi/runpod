@@ -4,15 +4,15 @@ FROM runpod/worker-comfyui:5.1.0-base
 RUN cd /comfyui && git fetch origin master && git reset --hard origin/master \
     && pip install -r requirements.txt
 
-# Modell-Verzeichnisse als Symlinks auf das Network Volume zeigen lassen
+# Modell-Verzeichnisse als Symlinks auf das tatsaechliche RunPod-Volume zeigen lassen
 RUN rm -rf /comfyui/models/vae \
            /comfyui/models/text_encoders \
            /comfyui/models/loras \
            /comfyui/models/diffusion_models \
-    && ln -s /runpod-volume/models/vae             /comfyui/models/vae \
-    && ln -s /runpod-volume/models/text_encoders   /comfyui/models/text_encoders \
-    && ln -s /runpod-volume/models/loras           /comfyui/models/loras \
-    && ln -s /runpod-volume/models/diffusion_models /comfyui/models/diffusion_models
+    && ln -s /workspace/models/vae               /comfyui/models/vae \
+    && ln -s /workspace/models/text_encoders     /comfyui/models/text_encoders \
+    && ln -s /workspace/models/loras             /comfyui/models/loras \
+    && ln -s /workspace/models/diffusion_models  /comfyui/models/diffusion_models
 
 # ffmpeg + Video Helper Suite (build 2)
 RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
