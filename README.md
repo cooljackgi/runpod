@@ -1,66 +1,55 @@
-# RunPod Serverless — WAN 2.2 I2V
+# RunPod Serverless - WAN 2.2 I2V
 
-ComfyUI-basierter Serverless Worker für WAN 2.2 Image-to-Video Generierung.
+ComfyUI-basierter Worker fuer WAN 2.2 Image-to-Video.
 
 ## Setup
 
-### 1. Network Volume befüllen
+### 1. Network Volume befuellen
 
-Einmalig einen günstigen Pod (z.B. RTX 3090) mit dem Network Volume mounten
-und `models.sh` ausführen:
+Einmalig einen Pod mit gemountetem `/workspace` starten und ausfuehren:
+
+```bash
+bash /usr/local/bin/models.sh
+```
+
+Oder im Repo:
 
 ```bash
 bash models.sh
 ```
 
-Benötigter Speicher: ~40 GB
-
-### 2. Serverless Endpoint einrichten
+### 2. Serverless / Pod Mount
 
 | Einstellung | Wert |
 |---|---|
-| GPU | L40S (48 GB) empfohlen, RTX 4090 für kurze Clips |
-| Min Workers | 0 |
-| Max Workers | 3 |
-| Execution Timeout | **1800s** |
-| FlashBoot | **ON** |
-| Network Volume | auf `/runpod-volume` mounten |
-| Container Disk | 20 GB |
+| Network Volume | auf `/workspace` mounten |
+| Port | `8188/http` |
+| GPU | kompatibel fuer den aktuellen Torch-Stack, z. B. `L40S`, `L40`, `A40`, `H100` |
 
-### 3. Input-Format
+### 3. Reset / Faststart
 
-```json
-{
-  "input": {
-    "workflow": { "...ComfyUI API Workflow JSON..." },
-    "images": [
-      { "name": "input.png", "image": "base64-encoded-png" }
-    ]
-  }
-}
+Nach Pod-Reset oder wenn der Laufzeitstand inkonsistent wirkt:
+
+```bash
+bash /usr/local/bin/repair_and_start_comfy.sh
 ```
 
-### 4. Output-Format
+Das Skript:
+- zieht Comfy auf aktuellen `master`
+- installiert `requirements.txt`
+- installiert `comfyui-frontend-package` und `comfyui-workflow-templates`
+- setzt die vier Modell-Symlinks auf `/workspace/models/...`
+- startet Comfy auf `0.0.0.0:8188`
 
-```json
-{
-  "output": {
-    "images": [
-      { "filename": "output_00001_.mp4", "type": "base64", "data": "..." }
-    ]
-  }
-}
-```
+## Erwartete Dateien
 
-## Modelle
+- `diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors`
+- `diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors`
+- `text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors`
+- `vae/wan_2.1_vae.safetensors`
+- `loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors`
+- `loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors`
 
-Alle Modelle von `Comfy-Org/Wan_2.2_ComfyUI_Repackaged` auf HuggingFace:
+## Hinweis
 
-| Datei | Pfad |
-|---|---|
-| `wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors` | `models/diffusion_models/` |
-| `wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors` | `models/diffusion_models/` |
-| `umt5_xxl_fp8_e4m3fn_scaled.safetensors` | `models/text_encoders/` |
-| `wan_2.1_vae.safetensors` | `models/vae/` |
-| `wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors` | `models/loras/` |
-| `wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors` | `models/loras/` |
+Nicht per UI auf einem funktionierenden Pod updaten. Updates besser auf einem frischen Test-Pod pruefen.
