@@ -1,0 +1,8 @@
+comfyui:
+    base_path: /runpod-volume/
+    checkpoints: models/checkpoints/
+    diffusion_models: models/diffusion_models/
+    vae: models/vae/
+    text_encoders: models/text_encoders/
+    loras: models/loras/
+    upscale_models: models/upscale_models/
