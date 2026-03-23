@@ -1,0 +1,54 @@
+{
+  "input": {
+    "workflow": {
+      "1": {
+        "class_type": "LoadImage",
+        "inputs": {
+          "image": "input.png"
+        }
+      },
+      "2": {
+        "class_type": "ImageToVideoWan22",
+        "inputs": {
+          "start_image": ["1", 0],
+          "prompt": "a beautiful woman walking on the beach, cinematic, 4k",
+          "negative_prompt": "blurry, low quality, distorted",
+          "width": 832,
+          "height": 480,
+          "length": 25,
+          "steps": 4,
+          "cfg": 1.0,
+          "denoise": 1.0,
+          "sampler_name": "euler",
+          "scheduler": "simple",
+          "fps": 8,
+          "seed": 42,
+          "high_noise": "wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
+          "low_noise": "wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors",
+          "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+          "vae_name": "wan_2.1_vae.safetensors",
+          "high_noise_lora": "wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors",
+          "low_noise_lora": "wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors",
+          "enable_turbo_mode": true
+        }
+      },
+      "3": {
+        "class_type": "VHS_VideoCombine",
+        "inputs": {
+          "images": ["2", 0],
+          "frame_rate": 8,
+          "filename_prefix": "output",
+          "format": "video/h264-mp4",
+          "pix_fmt": "yuv420p",
+          "crf": 18
+        }
+      }
+    },
+    "images": [
+      {
+        "name": "input.png",
+        "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      }
+    ]
+  }
+}
