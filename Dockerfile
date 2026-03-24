@@ -9,8 +9,13 @@ RUN cd /comfyui \
     && pip install -r requirements.txt \
     && pip install comfyui-frontend-package comfyui-workflow-templates
 
-# Modell-Verzeichnisse standardmaessig auf das gemountete /workspace-Volume zeigen lassen.
-RUN mkdir -p /workspace/models/diffusion_models /workspace/models/text_encoders /workspace/models/vae /workspace/models/loras \
+# Modell-Verzeichnisse robust verdrahten:
+# - normale Pods mounten das Volume auf /workspace und ueberdecken diesen Pfad
+# - Serverless mountet Network Volumes auf /runpod-volume; dafuer zeigt das
+#   Image standardmaessig /workspace/models -> /runpod-volume/models
+RUN mkdir -p /workspace /runpod-volume \
+    && rm -rf /workspace/models \
+    && ln -s /runpod-volume/models /workspace/models \
     && rm -rf /comfyui/models/vae \
               /comfyui/models/text_encoders \
               /comfyui/models/loras \
