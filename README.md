@@ -1,32 +1,18 @@
-# RunPod Serverless - WAN 2.2 I2V
+# RunPod ImagePod
 
-ComfyUI-basierter Worker fuer WAN 2.2 Image-to-Video.
+ComfyUI-basierter Worker fuer Bildgenerierung mit persistenten Modellen auf dem RunPod-Volume.
 
 ## Setup
 
-### 1. Network Volume befuellen
-
-Einmalig einen Pod mit gemountetem `/workspace` starten und ausfuehren:
-
-```bash
-bash /usr/local/bin/models.sh
-```
-
-Oder im Repo:
-
-```bash
-bash models.sh
-```
-
-### 2. Serverless / Pod Mount
+### 1. Pod Mount
 
 | Einstellung | Wert |
 |---|---|
 | Network Volume | auf `/workspace` mounten |
 | Port | `8188/http` |
-| GPU | kompatibel fuer den aktuellen Torch-Stack, z. B. `L40S`, `L40`, `A40`, `H100` |
+| GPU | kompatibel fuer den aktuellen Torch-Stack, z. B. `4090`, `3090`, `A40`, `A5000` |
 
-### 3. Reset / Faststart
+### 2. Reset / Faststart
 
 Nach Pod-Reset oder wenn der Laufzeitstand inkonsistent wirkt:
 
@@ -36,19 +22,22 @@ bash /usr/local/bin/repair_and_start_comfy.sh
 
 Das Skript:
 - zieht Comfy auf aktuellen `master`
-- installiert `requirements.txt`
-- installiert `comfyui-frontend-package` und `comfyui-workflow-templates`
-- setzt die vier Modell-Symlinks auf `/workspace/models/...`
+- installiert `requirements.txt` ohne die aktuell kaputten Frontend-Pakete hart zu erzwingen
+- versucht `comfyui-frontend-package` und `comfyui-workflow-templates` optional
+- setzt die Bild-Modell-Symlinks auf `/workspace/models/...`
 - startet Comfy auf `0.0.0.0:8188`
 
 ## Erwartete Dateien
 
-- `diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors`
-- `diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors`
-- `text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors`
+- `checkpoints/*.safetensors`
+- `loras/*.safetensors`
+- `embeddings/*`
+- `controlnet/*`
+- `clip/*`
 - `vae/wan_2.1_vae.safetensors`
-- `loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors`
-- `loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors`
+- `clip_vision/*`
+- `ipadapter/*`
+- `insightface/*`
 
 ## Hinweis
 
